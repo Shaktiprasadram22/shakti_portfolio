@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #09090b;
+  color: #f4f4f5;
+}
+
+.section {
+  @apply relative mx-auto max-w-6xl px-5 py-20 md:px-8 md:py-24;
+}
+
+.glass {
+  @apply border border-white/10 bg-white/5 backdrop-blur-xl;
+}
+
+.accent-text {
+  @apply bg-gradient-to-r from-sky-400 via-teal-300 to-green-400 bg-clip-text text-transparent;
+}
+
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(circle at center, black 20%, transparent 85%);
+}
+
+@keyframes terminal-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.terminal-cursor {
+  display: inline-block;
+  width: 9px;
+  height: 16px;
+  border-radius: 2px;
+  background: rgba(103, 232, 249, 0.95);
+  animation: terminal-blink 1s step-end infinite;
+}
