@@ -34,10 +34,11 @@ function categoryClasses(category: ArchitectureNode["category"]) {
 }
 
 export function SystemArchitecture() {
-  const [activeProjectId, setActiveProjectId] = useState(architectureProjects[0].id);
+  const defaultProjectId = architectureProjects.find((project) => project.id === "ums-chatbot")?.id ?? architectureProjects[0].id;
+  const [activeProjectId, setActiveProjectId] = useState(defaultProjectId);
   const activeProject = useMemo(
-    () => architectureProjects.find((project) => project.id === activeProjectId) ?? architectureProjects[0],
-    [activeProjectId]
+    () => architectureProjects.find((project) => project.id === activeProjectId) ?? architectureProjects.find((project) => project.id === defaultProjectId) ?? architectureProjects[0],
+    [activeProjectId, defaultProjectId]
   );
 
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(activeProject.nodes[0]?.id ?? null);
@@ -249,10 +250,20 @@ export function SystemArchitecture() {
                 aria-hidden
               >
                 <defs>
-                  <linearGradient id="edgeGradient" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="rgba(125,211,252,0.45)" />
-                    <stop offset="100%" stopColor="rgba(45,212,191,0.5)" />
-                  </linearGradient>
+                  <marker id="edgeArrow" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto" markerUnits="strokeWidth">
+                    <path d="M0,0 L8,4 L0,8 z" fill="rgba(103,232,249,0.65)" />
+                  </marker>
+                  <marker
+                    id="edgeArrowActive"
+                    markerWidth="8"
+                    markerHeight="8"
+                    refX="6.5"
+                    refY="4"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                  >
+                    <path d="M0,0 L8,4 L0,8 z" fill="rgba(94,234,212,0.95)" />
+                  </marker>
                 </defs>
                 {activeProject.edges.map((edge) => {
                   const fromNode = nodesById[edge.from];
@@ -261,20 +272,33 @@ export function SystemArchitecture() {
                     return null;
                   }
                   const highlighted = edgeIsHighlighted(edge);
+                  const dx = toNode.x - fromNode.x;
+                  const dy = toNode.y - fromNode.y;
+                  const length = Math.hypot(dx, dy) || 1;
+                  const curve = edge.curve ?? 0;
+                  const normalX = -dy / length;
+                  const normalY = dx / length;
+                  const controlX = (fromNode.x + toNode.x) / 2 + normalX * curve;
+                  const controlY = (fromNode.y + toNode.y) / 2 + normalY * curve;
+                  const path =
+                    curve === 0
+                      ? `M ${fromNode.x} ${fromNode.y} L ${toNode.x} ${toNode.y}`
+                      : `M ${fromNode.x} ${fromNode.y} Q ${controlX} ${controlY} ${toNode.x} ${toNode.y}`;
+                  const labelX = curve === 0 ? (fromNode.x + toNode.x) / 2 : 0.25 * fromNode.x + 0.5 * controlX + 0.25 * toNode.x;
+                  const labelY = curve === 0 ? (fromNode.y + toNode.y) / 2 : 0.25 * fromNode.y + 0.5 * controlY + 0.25 * toNode.y;
                   return (
                     <g key={edge.id}>
-                      <line
-                        x1={fromNode.x}
-                        y1={fromNode.y}
-                        x2={toNode.x}
-                        y2={toNode.y}
-                        stroke={highlighted ? "rgba(94,234,212,0.9)" : "url(#edgeGradient)"}
-                        strokeWidth={highlighted ? 2.6 : 1.4}
+                      <path
+                        d={path}
+                        fill="none"
+                        stroke={highlighted ? "rgba(94,234,212,0.95)" : "rgba(103,232,249,0.5)"}
+                        strokeWidth={highlighted ? 2.6 : 1.8}
                         strokeLinecap="round"
+                        markerEnd={highlighted ? "url(#edgeArrowActive)" : "url(#edgeArrow)"}
                       />
                       <text
-                        x={(fromNode.x + toNode.x) / 2}
-                        y={(fromNode.y + toNode.y) / 2 - 8}
+                        x={labelX + (edge.labelDx ?? 0)}
+                        y={labelY - 8 + (edge.labelDy ?? 0)}
                         textAnchor="middle"
                         fill="rgba(161,161,170,0.9)"
                         fontSize="10"
@@ -289,6 +313,9 @@ export function SystemArchitecture() {
 
               {!reducedMotion &&
                 activeProject.edges.map((edge, index) => {
+                  if (edge.curve) {
+                    return null;
+                  }
                   const fromNode = nodesById[edge.from];
                   const toNode = nodesById[edge.to];
                   if (!fromNode || !toNode) {
@@ -325,7 +352,6 @@ export function SystemArchitecture() {
                     key={node.id}
                     data-arch-node="true"
                     type="button"
-                    whileHover={{ scale: 1.05 }}
                     onMouseEnter={() => setHoveredNodeId(node.id)}
                     onMouseLeave={() => setHoveredNodeId((current) => (current === node.id ? null : current))}
                     onClick={() => setSelectedNodeId(node.id)}

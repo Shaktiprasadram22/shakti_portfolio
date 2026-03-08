@@ -72,6 +72,9 @@ export type ArchitectureEdge = {
   from: string;
   to: string;
   flow: string;
+  labelDx?: number;
+  labelDy?: number;
+  curve?: number;
 };
 
 export type ArchitectureProject = {
