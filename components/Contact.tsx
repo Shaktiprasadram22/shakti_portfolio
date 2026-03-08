@@ -3,18 +3,38 @@
 import { FormEvent, useState } from "react";
 import { Github, Linkedin, Mail, Phone } from "lucide-react";
 import { motion } from "framer-motion";
+import emailjs from "@emailjs/browser";
 import { fadeInUp, sectionViewport } from "@/lib/animations";
 
 export function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const subject = encodeURIComponent(`Portfolio Contact from ${name || "Visitor"}`);
-    const body = encodeURIComponent(`${message}\n\nFrom: ${name}\nEmail: ${email}`);
-    window.location.href = `mailto:shaktiram.coc@gmail.com?subject=${subject}&body=${body}`;
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
+
+    if (!serviceId || !templateId || !publicKey) {
+      alert("Email service is not configured properly.");
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      await emailjs.sendForm(serviceId, templateId, event.currentTarget, publicKey);
+      alert("Message sent successfully!");
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch {
+      alert("Failed to send message");
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -42,6 +62,7 @@ export function Contact() {
             Name
             <input
               type="text"
+              name="name"
               required
               value={name}
               onChange={(event) => setName(event.target.value)}
@@ -52,6 +73,7 @@ export function Contact() {
             Email
             <input
               type="email"
+              name="email"
               required
               value={email}
               onChange={(event) => setEmail(event.target.value)}
@@ -61,6 +83,7 @@ export function Contact() {
           <label className="block text-sm text-zinc-300">
             Message
             <textarea
+              name="message"
               required
               value={message}
               onChange={(event) => setMessage(event.target.value)}
@@ -70,9 +93,10 @@ export function Contact() {
           </label>
           <button
             type="submit"
+            disabled={isSending}
             className="rounded-xl bg-gradient-to-r from-sky-400 to-teal-300 px-5 py-3 text-sm font-semibold text-black transition hover:scale-[1.02]"
           >
-            Send Message
+            {isSending ? "Sending..." : "Send Message"}
           </button>
         </motion.form>
 
