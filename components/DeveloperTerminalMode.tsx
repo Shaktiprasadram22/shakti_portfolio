@@ -232,7 +232,7 @@ export function DeveloperTerminalMode() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-[80] inline-flex items-center gap-2 rounded-xl border border-cyan-300/40 bg-zinc-950/85 px-4 py-2 text-sm text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,.2)] backdrop-blur-md transition hover:border-cyan-200 hover:shadow-[0_0_40px_rgba(34,211,238,.32)]"
+        className="dev-terminal-trigger fixed bottom-6 right-6 z-[80] inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium backdrop-blur-md"
       >
         <Terminal size={16} />
         Open Dev Terminal
@@ -244,38 +244,38 @@ export function DeveloperTerminalMode() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm"
+            className="terminal-overlay fixed inset-0 z-[90] backdrop-blur-sm"
           >
             <motion.div
               initial={{ opacity: 0, y: 22, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 22, scale: 0.98 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="mx-auto mt-8 flex h-[85vh] w-[94vw] max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/15 bg-zinc-950/96 shadow-[0_10px_80px_rgba(0,0,0,.55)]"
+              className="terminal-shell mx-auto mt-8 flex h-[85vh] w-[94vw] max-w-5xl flex-col overflow-hidden rounded-2xl"
             >
-              <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-                <div className="flex items-center gap-2 text-sm text-zinc-300">
+              <div className="terminal-header flex items-center justify-between px-4 py-3">
+                <div className="flex items-center gap-2 text-sm terminal-header-text">
                   <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
                   <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                  <span className="ml-2 font-heading text-zinc-200">Developer Terminal Mode</span>
+                  <span className="ml-2 font-heading">Developer Terminal Mode</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="rounded-md border border-white/15 p-1.5 text-zinc-300 transition hover:border-white/35 hover:text-white"
+                  className="terminal-close rounded-md p-1.5 transition"
                   aria-label="Close terminal"
                 >
                   <X size={15} />
                 </button>
               </div>
 
-              <div ref={outputRef} className="flex-1 overflow-y-auto px-4 py-4 font-mono text-sm leading-relaxed">
+              <div ref={outputRef} className="terminal-output flex-1 overflow-y-auto px-4 py-4 font-mono text-sm leading-relaxed">
                 {entries.map((entry) => (
                   <pre
                     key={entry.id}
                     className={`whitespace-pre-wrap break-words ${
-                      entry.kind === "command" ? "text-cyan-200" : "text-zinc-200"
+                      entry.kind === "command" ? "terminal-command" : "terminal-text"
                     }`}
                   >
                     {entry.text}
@@ -283,9 +283,9 @@ export function DeveloperTerminalMode() {
                 ))}
               </div>
 
-              <form onSubmit={onSubmit} className="border-t border-white/10 px-4 py-3">
+              <form onSubmit={onSubmit} className="terminal-input-wrap px-4 py-3">
                 <label className="flex items-center gap-2 font-mono text-sm">
-                  <span className="text-cyan-300">{prompt}</span>
+                  <span className="terminal-prompt">{prompt}</span>
                   <input
                     ref={inputRef}
                     value={input}
@@ -293,7 +293,7 @@ export function DeveloperTerminalMode() {
                     onKeyDown={onKeyDown}
                     spellCheck={false}
                     autoComplete="off"
-                    className="w-full bg-transparent text-zinc-100 outline-none"
+                    className="terminal-input w-full bg-transparent outline-none"
                     placeholder="Type a command..."
                   />
                   <span className="terminal-cursor" />

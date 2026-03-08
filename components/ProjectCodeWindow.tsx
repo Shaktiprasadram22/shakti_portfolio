@@ -169,23 +169,23 @@ export function ProjectCodeWindow() {
   const snippetLines = activeSnippet ? activeSnippet.code.split("\n") : [];
 
   return (
-    <div className="mt-10 rounded-2xl border border-white/10 bg-zinc-950/70 p-5 shadow-glow">
-      <div className="mb-5 flex items-center justify-between gap-3">
+    <div className="code-window mt-14">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <div>
-          <p className="text-xs uppercase tracking-[0.18em] text-sky-300">Interactive Code Window</p>
-          <h3 className="font-heading text-2xl text-white">Implementation Highlights</h3>
+          <p className="text-xs uppercase tracking-[0.2em] text-sky-300">Interactive Code Window</p>
+          <h3 className="font-heading text-3xl leading-tight text-white md:text-[2rem]">Implementation Highlights</h3>
         </div>
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-5 flex flex-wrap gap-2.5">
         {projectsWithSnippets.map((project) => (
           <button
             key={project.title}
             type="button"
             onClick={() => setActiveProjectTitle(project.title)}
-            className={`rounded-full border px-3 py-1.5 text-xs transition ${
+            className={`snippet-pill rounded-full border px-4 py-2 text-xs transition ${
               activeProjectTitle === project.title
-                ? "border-sky-300/60 bg-sky-400/20 text-sky-100"
+                ? "snippet-pill-active border-sky-300/55 bg-sky-400/18 text-sky-100"
                 : "border-white/15 bg-white/5 text-zinc-300 hover:border-white/35 hover:text-zinc-100"
             }`}
           >
@@ -194,15 +194,15 @@ export function ProjectCodeWindow() {
         ))}
       </div>
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-5 flex flex-wrap gap-2.5">
         {activeProject?.snippets?.map((snippet) => (
           <button
             key={snippet.id}
             type="button"
             onClick={() => setActiveSnippetId(snippet.id)}
-            className={`rounded-lg border px-3 py-2 text-xs transition ${
+            className={`snippet-pill rounded-xl border px-4 py-2 text-xs transition ${
               activeSnippet?.id === snippet.id
-                ? "border-teal-300/60 bg-teal-400/15 text-teal-100"
+                ? "snippet-pill-active border-teal-300/55 bg-teal-400/14 text-teal-100"
                 : "border-white/15 bg-zinc-900/70 text-zinc-300 hover:border-white/35 hover:text-zinc-100"
             }`}
           >
@@ -219,9 +219,9 @@ export function ProjectCodeWindow() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="overflow-hidden rounded-xl border border-white/10 bg-zinc-900/80"
+            className="code-frame overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/80"
           >
-            <div className="flex items-center justify-between border-b border-white/10 bg-zinc-950/85 px-3 py-2">
+            <div className="flex items-center justify-between border-b border-white/10 bg-zinc-950/85 px-4 py-3">
               <div className="flex items-center gap-2 text-xs text-zinc-300">
                 <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
                 <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
@@ -235,7 +235,7 @@ export function ProjectCodeWindow() {
               <button
                 type="button"
                 onClick={() => void copySnippet()}
-                className="inline-flex items-center gap-1 rounded-md border border-white/20 bg-zinc-900/90 px-2.5 py-1 text-xs text-zinc-200 transition hover:border-white/40"
+                className="inline-flex items-center gap-1 rounded-lg border border-white/20 bg-zinc-900/90 px-3 py-1.5 text-xs text-zinc-200 transition hover:border-white/40"
               >
                 {copiedSnippetId === activeSnippet.id ? <Check size={12} /> : <Copy size={12} />}
                 {copiedSnippetId === activeSnippet.id ? "Copied" : "Copy"}
@@ -243,12 +243,12 @@ export function ProjectCodeWindow() {
             </div>
 
             {activeSnippet.description && (
-              <div className="border-b border-white/10 px-3 py-2 text-xs text-zinc-400">
+              <div className="border-b border-white/10 px-4 py-2.5 text-xs text-zinc-400">
                 {activeSnippet.description}
               </div>
             )}
 
-            <div className="max-h-[420px] overflow-auto p-3 font-mono text-xs leading-6">
+            <div className="max-h-[430px] overflow-auto p-4 font-mono text-xs leading-6">
               {snippetLines.map((line, index) => (
                 <div key={`${activeSnippet.id}-line-${index}`} className="grid grid-cols-[40px,1fr]">
                   <span className="select-none pr-3 text-right text-zinc-500">{index + 1}</span>

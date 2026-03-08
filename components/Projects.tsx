@@ -25,21 +25,21 @@ export function Projects() {
         whileInView="visible"
         viewport={sectionViewport}
         variants={staggerContainer}
-        className="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+        className="grid items-stretch gap-6 md:grid-cols-2 xl:grid-cols-3"
       >
         {projects.map((project) => (
           <motion.article
             key={project.title}
             variants={cardRise}
-            whileHover={{ y: -8, scale: 1.01 }}
-            transition={{ duration: 0.2 }}
-            className="glass group flex h-full flex-col rounded-2xl p-5"
+            whileHover={{ y: -6 }}
+            transition={{ duration: 0.22, ease: "easeOut" }}
+            className="project-card project-card-hover group flex h-full flex-col"
           >
-            <div className="mb-4 flex items-start justify-between">
+            <div className="mb-5 flex items-start justify-between gap-4">
               <div>
-                <h3 className="font-heading text-2xl text-white">{project.title}</h3>
+                <h3 className="font-heading text-[2rem] leading-tight text-white">{project.title}</h3>
                 {project.duration && (
-                  <p className="mt-1 text-xs uppercase tracking-wide text-zinc-500">{project.duration}</p>
+                  <p className="mt-1.5 text-[11px] uppercase tracking-[0.14em] text-zinc-500">{project.duration}</p>
                 )}
               </div>
               <a
@@ -47,28 +47,15 @@ export function Projects() {
                 target="_blank"
                 rel="noreferrer"
                 aria-label={`Open ${project.title} repository`}
-                className="rounded-lg border border-white/10 p-2 text-zinc-300 transition hover:border-sky-300 hover:text-sky-300"
+                className="icon-action shrink-0 rounded-xl p-2.5"
               >
                 <Github size={16} />
               </a>
             </div>
-            <p className="text-sm leading-relaxed text-zinc-400">{project.description}</p>
-            {project.highlights && project.highlights.length > 0 && (
-              <ul className="mt-4 space-y-2 text-xs text-zinc-300">
-                {project.highlights.map((line) => (
-                  <li key={line} className="flex gap-2">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-300" />
-                    <span>{line}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <div className="mt-4 flex flex-wrap gap-2">
+            <p className="project-description text-[15px] leading-8">{project.description}</p>
+            <div className="mt-6 flex flex-wrap gap-2.5">
               {project.tech.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-gradient-to-r from-zinc-900 to-zinc-800 px-3 py-1 text-xs text-zinc-300 ring-1 ring-white/10"
-                >
+                <span key={tag} className="tech-pill">
                   {tag}
                 </span>
               ))}
@@ -77,7 +64,7 @@ export function Projects() {
               href={project.github}
               target="_blank"
               rel="noreferrer"
-              className="mt-6 inline-flex items-center gap-2 text-sm text-sky-300 transition group-hover:text-teal-300"
+              className="project-link mt-auto inline-flex items-center gap-2 pt-8 text-sm"
             >
               View on GitHub <ArrowUpRight size={14} />
             </a>

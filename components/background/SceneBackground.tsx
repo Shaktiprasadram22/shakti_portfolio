@@ -7,9 +7,10 @@ import * as THREE from "three";
 type SceneBackgroundProps = {
   simplified: boolean;
   pointer: MutableRefObject<{ x: number; y: number }>;
+  isLight?: boolean;
 };
 
-function ParticleField({ simplified, pointer }: SceneBackgroundProps) {
+function ParticleField({ simplified, pointer, isLight }: SceneBackgroundProps) {
   const pointsRef = useRef<THREE.Points>(null);
   const groupRef = useRef<THREE.Group>(null);
   const particleCount = simplified ? 220 : 520;
@@ -66,10 +67,10 @@ function ParticleField({ simplified, pointer }: SceneBackgroundProps) {
           />
         </bufferGeometry>
         <pointsMaterial
-          color="#7dd3fc"
+          color={isLight ? "#93c5fd" : "#7dd3fc"}
           size={simplified ? 0.03 : 0.045}
           transparent
-          opacity={0.55}
+          opacity={isLight ? (simplified ? 0.34 : 0.4) : simplified ? 0.58 : 0.68}
           depthWrite={false}
           blending={THREE.AdditiveBlending}
           sizeAttenuation
@@ -79,7 +80,7 @@ function ParticleField({ simplified, pointer }: SceneBackgroundProps) {
   );
 }
 
-function GlowOrbs({ simplified, pointer }: SceneBackgroundProps) {
+function GlowOrbs({ simplified, pointer, isLight }: SceneBackgroundProps) {
   const clusterRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
@@ -112,22 +113,32 @@ function GlowOrbs({ simplified, pointer }: SceneBackgroundProps) {
     <group ref={clusterRef}>
       <mesh position={[-2.6, 1.2, -1]}>
         <icosahedronGeometry args={[simplified ? 0.6 : 0.75, 1]} />
-        <meshStandardMaterial color="#0ea5e9" emissive="#0ea5e9" emissiveIntensity={0.38} roughness={0.35} />
+        <meshStandardMaterial
+          color={isLight ? "#7dd3fc" : "#0ea5e9"}
+          emissive={isLight ? "#7dd3fc" : "#0ea5e9"}
+          emissiveIntensity={isLight ? 0.2 : 0.5}
+          roughness={0.35}
+        />
       </mesh>
       {!simplified && (
         <mesh position={[2.8, -1.6, -2.2]}>
           <octahedronGeometry args={[0.62, 0]} />
           <meshStandardMaterial
-            color="#14b8a6"
-            emissive="#14b8a6"
-            emissiveIntensity={0.42}
+            color={isLight ? "#99f6e4" : "#14b8a6"}
+            emissive={isLight ? "#99f6e4" : "#14b8a6"}
+            emissiveIntensity={isLight ? 0.22 : 0.54}
             roughness={0.28}
           />
         </mesh>
       )}
       <mesh position={[0.5, 2.1, -3.5]}>
         <sphereGeometry args={[0.48, 18, 18]} />
-        <meshStandardMaterial color="#22c55e" emissive="#22c55e" emissiveIntensity={0.3} roughness={0.45} />
+        <meshStandardMaterial
+          color={isLight ? "#bbf7d0" : "#22c55e"}
+          emissive={isLight ? "#bbf7d0" : "#22c55e"}
+          emissiveIntensity={isLight ? 0.18 : 0.42}
+          roughness={0.45}
+        />
       </mesh>
     </group>
   );
@@ -145,7 +156,7 @@ function CameraRig({ simplified, pointer }: SceneBackgroundProps) {
   return null;
 }
 
-export function SceneBackground({ simplified, pointer }: SceneBackgroundProps) {
+export function SceneBackground({ simplified, pointer, isLight }: SceneBackgroundProps) {
   return (
     <Canvas
       dpr={simplified ? [1, 1.25] : [1, 1.5]}
@@ -154,13 +165,13 @@ export function SceneBackground({ simplified, pointer }: SceneBackgroundProps) {
       frameloop="always"
       performance={{ min: 0.5 }}
     >
-      <fog attach="fog" args={["#020617", 10, 28]} />
-      <ambientLight intensity={0.34} />
-      <pointLight position={[3, 4, 4]} intensity={1.2} color="#38bdf8" />
-      <pointLight position={[-4, -2, 2]} intensity={0.7} color="#14b8a6" />
+      <fog attach="fog" args={[isLight ? "#eef4fa" : "#020617", 10, 28]} />
+      <ambientLight intensity={isLight ? 0.42 : 0.34} />
+      <pointLight position={[3, 4, 4]} intensity={isLight ? 0.58 : 1.2} color="#38bdf8" />
+      <pointLight position={[-4, -2, 2]} intensity={isLight ? 0.42 : 0.7} color="#14b8a6" />
       <CameraRig simplified={simplified} pointer={pointer} />
-      <ParticleField simplified={simplified} pointer={pointer} />
-      <GlowOrbs simplified={simplified} pointer={pointer} />
+      <ParticleField simplified={simplified} pointer={pointer} isLight={isLight} />
+      <GlowOrbs simplified={simplified} pointer={pointer} isLight={isLight} />
     </Canvas>
   );
 }

@@ -57,38 +57,36 @@ function highlightJson(json: string) {
     (match) => {
       if (/^"/.test(match)) {
         if (/:$/.test(match)) {
-          return `<span style="color:#7dd3fc">${match}</span>`;
+          return `<span class="json-key">${match}</span>`;
         }
-        return `<span style="color:#86efac">${match}</span>`;
+        return `<span class="json-string">${match}</span>`;
       }
       if (/true|false/.test(match)) {
-        return `<span style="color:#f9a8d4">${match}</span>`;
+        return `<span class="json-boolean">${match}</span>`;
       }
       if (/null/.test(match)) {
-        return `<span style="color:#fda4af">${match}</span>`;
+        return `<span class="json-null">${match}</span>`;
       }
-      return `<span style="color:#facc15">${match}</span>`;
+      return `<span class="json-number">${match}</span>`;
     }
   );
 }
 
 function methodBadge(method: ApiEndpoint["method"]) {
-  return method === "GET"
-    ? "border-emerald-300/50 bg-emerald-400/15 text-emerald-200"
-    : "border-amber-300/50 bg-amber-400/15 text-amber-100";
+  return method === "GET" ? "method-badge method-get" : "method-badge method-post";
 }
 
 function statusColor(status: number | null) {
   if (status === null) {
-    return "text-zinc-400";
+    return "status-chip status-idle";
   }
   if (status >= 200 && status < 300) {
-    return "text-emerald-300";
+    return "status-chip status-ok";
   }
   if (status >= 400) {
-    return "text-rose-300";
+    return "status-chip status-error";
   }
-  return "text-amber-300";
+  return "status-chip status-warn";
 }
 
 export function LiveApiPlayground() {
@@ -107,7 +105,7 @@ export function LiveApiPlayground() {
 
   const responseMarkup = useMemo(() => {
     if (!responseBody) {
-      return '<span style="color:#71717a">{\n  "message": "Run a request to inspect API output."\n}</span>';
+      return '{\n  "message": "Run a request to inspect API output."\n}';
     }
     return highlightJson(responseBody);
   }, [responseBody]);
@@ -211,7 +209,7 @@ export function LiveApiPlayground() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={sectionViewport}
-          className="glass rounded-2xl p-5"
+          className="playground-panel rounded-2xl p-5"
         >
           <h3 className="font-heading text-2xl text-zinc-100">Request Builder</h3>
           <p className="mt-2 text-sm text-zinc-400">Select an endpoint to send a live request instantly.</p>
@@ -224,22 +222,16 @@ export function LiveApiPlayground() {
                   key={endpoint.id}
                   type="button"
                   onClick={() => void onSelectEndpoint(endpoint)}
-                  className={`w-full rounded-xl border p-4 text-left transition ${
-                    active
-                      ? "border-cyan-300/70 bg-cyan-400/15"
-                      : "border-white/15 bg-zinc-900/65 hover:border-white/30"
-                  }`}
+                  className={`endpoint-card w-full rounded-xl border p-4 text-left transition ${active ? "endpoint-card-active" : ""}`}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <span
-                      className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${methodBadge(endpoint.method)}`}
-                    >
+                    <span className={`${methodBadge(endpoint.method)} rounded-full px-2.5 py-1 text-[11px] font-semibold`}>
                       {endpoint.method}
                     </span>
-                    <span className="text-xs text-zinc-500">{endpoint.path}</span>
+                    <span className="endpoint-path text-xs">{endpoint.path}</span>
                   </div>
-                  <p className="mt-2 font-heading text-base text-zinc-100">{endpoint.name}</p>
-                  <p className="mt-1 text-xs text-zinc-400">{endpoint.description}</p>
+                  <p className="endpoint-title mt-2 font-heading text-base">{endpoint.name}</p>
+                  <p className="endpoint-description mt-1 text-xs">{endpoint.description}</p>
                 </button>
               );
             })}
@@ -252,7 +244,7 @@ export function LiveApiPlayground() {
                 value={requestBody}
                 onChange={(event) => setRequestBody(event.target.value)}
                 rows={8}
-                className="w-full rounded-xl border border-white/15 bg-zinc-950/80 px-3 py-2 font-mono text-xs text-zinc-200 outline-none transition focus:border-cyan-300"
+                className="request-editor w-full rounded-xl border px-3 py-2 font-mono text-xs outline-none transition"
               />
             </div>
           )}
@@ -262,7 +254,7 @@ export function LiveApiPlayground() {
               type="button"
               onClick={() => void runRequest(activeEndpoint)}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-sky-400 to-teal-300 px-4 py-2 text-sm font-semibold text-black transition hover:scale-[1.02] disabled:opacity-70"
+              className="playground-btn playground-btn-primary inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold disabled:opacity-70"
             >
               <Play size={14} />
               {loading ? "Sending..." : "Send Request"}
@@ -271,7 +263,7 @@ export function LiveApiPlayground() {
               type="button"
               onClick={() => void runRequest(activeEndpoint)}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-zinc-900/70 px-4 py-2 text-sm text-zinc-200 transition hover:border-white/40"
+              className="playground-btn playground-btn-secondary inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm disabled:opacity-70"
             >
               <RefreshCw size={14} />
               Retry
@@ -284,29 +276,29 @@ export function LiveApiPlayground() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={sectionViewport}
           transition={{ delay: 0.08 }}
-          className="glass rounded-2xl p-5"
+          className="playground-panel rounded-2xl p-5"
         >
           <h3 className="font-heading text-2xl text-zinc-100">Response Viewer</h3>
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-zinc-950/75 p-3">
+          <div className="response-meta mt-4 rounded-xl p-3">
             <div className="flex flex-wrap items-center gap-3 text-xs">
-              <span className={`rounded-full border px-2 py-0.5 font-semibold ${methodBadge(activeEndpoint.method)}`}>
+              <span className={`${methodBadge(activeEndpoint.method)} rounded-full px-2.5 py-1 font-semibold`}>
                 {activeEndpoint.method}
               </span>
-              <span className="font-mono text-zinc-300">{lastEndpoint}</span>
-              <span className={`font-semibold ${statusColor(status)}`}>
+              <span className="response-endpoint font-mono">{lastEndpoint}</span>
+              <span className={statusColor(status)}>
                 {status === null ? "Status: --" : `Status: ${status}`}
               </span>
-              <span className="text-zinc-400">{latencyMs === null ? "-- ms" : `${latencyMs} ms`}</span>
+              <span className="latency-chip">{latencyMs === null ? "-- ms" : `${latencyMs} ms`}</span>
             </div>
           </div>
 
-          <div className="mt-4 rounded-xl border border-white/10 bg-black/65 p-4">
-            <div className="mb-3 flex items-center gap-2 text-xs text-zinc-400">
+          <div className="response-panel mt-4 rounded-xl p-4">
+            <div className="mb-3 flex items-center gap-2 text-xs response-label">
               <Server size={14} />
               JSON Response
             </div>
-            <pre className="max-h-[430px] overflow-auto whitespace-pre-wrap break-words rounded-lg bg-zinc-950/90 p-4 font-mono text-xs leading-relaxed">
+            <pre className="response-json max-h-[430px] overflow-auto whitespace-pre-wrap break-words rounded-lg p-4 font-mono text-xs leading-relaxed">
               <code dangerouslySetInnerHTML={{ __html: responseMarkup }} />
             </pre>
           </div>

@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "@/components/theme/ThemeProvider";
 
 const SceneBackground = dynamic(
   () => import("./SceneBackground").then((mod) => mod.SceneBackground),
@@ -9,6 +10,8 @@ const SceneBackground = dynamic(
 );
 
 export function GlobalBackground() {
+  const { theme } = useTheme();
+  const isLight = theme === "light";
   const [simplified, setSimplified] = useState(true);
   const [mounted, setMounted] = useState(false);
   const trailCount = simplified ? 4 : 7;
@@ -170,25 +173,65 @@ export function GlobalBackground() {
     <div aria-hidden className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
       <div
         ref={farGlowRef}
-        className="absolute inset-0 transition-transform duration-500 will-change-transform bg-[radial-gradient(circle_at_18%_15%,rgba(14,165,233,0.20),transparent_36%),radial-gradient(circle_at_78%_12%,rgba(20,184,166,0.16),transparent_34%),radial-gradient(circle_at_52%_85%,rgba(34,197,94,0.13),transparent_36%)]"
+        className={`absolute inset-0 transition-transform duration-500 will-change-transform ${
+          isLight
+            ? "bg-[radial-gradient(circle_at_14%_14%,rgba(186,230,253,0.2),transparent_40%),radial-gradient(circle_at_82%_16%,rgba(153,246,228,0.16),transparent_40%),radial-gradient(circle_at_52%_82%,rgba(220,252,231,0.14),transparent_42%)]"
+            : "bg-[radial-gradient(circle_at_18%_15%,rgba(14,165,233,0.20),transparent_36%),radial-gradient(circle_at_78%_12%,rgba(20,184,166,0.16),transparent_34%),radial-gradient(circle_at_52%_85%,rgba(34,197,94,0.13),transparent_36%)]"
+        }`}
       />
       <div
         ref={nearGlowRef}
-        className="absolute inset-0 transition-transform duration-500 will-change-transform bg-[radial-gradient(circle_at_20%_80%,rgba(56,189,248,0.10),transparent_30%),radial-gradient(circle_at_88%_68%,rgba(45,212,191,0.09),transparent_30%)]"
+        className={`absolute inset-0 transition-transform duration-500 will-change-transform ${
+          isLight
+            ? "bg-[radial-gradient(circle_at_20%_80%,rgba(186,230,253,0.16),transparent_34%),radial-gradient(circle_at_88%_68%,rgba(204,251,241,0.14),transparent_34%)]"
+            : "bg-[radial-gradient(circle_at_20%_80%,rgba(56,189,248,0.10),transparent_30%),radial-gradient(circle_at_88%_68%,rgba(45,212,191,0.09),transparent_30%)]"
+        }`}
       />
       <div
         ref={cursorTailRef}
-        className="absolute left-0 top-0 h-[280px] w-[280px] rounded-full opacity-0 will-change-transform [background:radial-gradient(circle,rgba(45,212,191,0.24)_0%,rgba(45,212,191,0.08)_35%,transparent_72%)] blur-3xl transition-opacity duration-300"
+        className={`absolute left-0 top-0 h-[280px] w-[280px] rounded-full opacity-0 will-change-transform blur-3xl transition-opacity duration-300 ${
+          isLight
+            ? "[background:radial-gradient(circle,rgba(125,211,252,0.12)_0%,rgba(125,211,252,0.04)_35%,transparent_72%)]"
+            : "[background:radial-gradient(circle,rgba(45,212,191,0.24)_0%,rgba(45,212,191,0.08)_35%,transparent_72%)]"
+        }`}
       />
       <div
         ref={cursorCoreRef}
-        className="absolute left-0 top-0 h-[160px] w-[160px] rounded-full opacity-0 will-change-transform [background:radial-gradient(circle,rgba(56,189,248,0.42)_0%,rgba(56,189,248,0.14)_36%,transparent_74%)] blur-2xl mix-blend-screen transition-opacity duration-300"
+        className={`absolute left-0 top-0 h-[160px] w-[160px] rounded-full opacity-0 will-change-transform blur-2xl transition-opacity duration-300 ${
+          isLight
+            ? "[background:radial-gradient(circle,rgba(125,211,252,0.22)_0%,rgba(125,211,252,0.08)_36%,transparent_74%)] mix-blend-normal"
+            : "[background:radial-gradient(circle,rgba(56,189,248,0.42)_0%,rgba(56,189,248,0.14)_36%,transparent_74%)] mix-blend-screen"
+        }`}
       />
-      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(2,6,23,0.55),rgba(9,9,11,0.9))]" />
-      {mounted && <SceneBackground simplified={simplified} pointer={pointer} />}
+      <div
+        className={`absolute inset-0 ${
+          isLight
+            ? "bg-[linear-gradient(to_bottom,rgba(255,255,255,0.54),rgba(248,250,252,0.68))]"
+            : "bg-[linear-gradient(to_bottom,rgba(2,6,23,0.26),rgba(9,9,11,0.62))]"
+        }`}
+      />
+      <div
+        className={`ambient-breathe absolute inset-0 ${
+          isLight
+            ? "bg-[radial-gradient(circle_at_24%_30%,rgba(186,230,253,0.2),transparent_48%),radial-gradient(circle_at_76%_68%,rgba(204,251,241,0.17),transparent_48%)]"
+            : "bg-[radial-gradient(circle_at_24%_30%,rgba(14,165,233,0.24),transparent_44%),radial-gradient(circle_at_76%_68%,rgba(20,184,166,0.2),transparent_46%)]"
+        }`}
+      />
+      <div className={`absolute inset-0 ${isLight ? "opacity-[0.32]" : "opacity-[0.72]"}`}>
+        {mounted && <SceneBackground simplified={simplified} pointer={pointer} isLight={isLight} />}
+      </div>
+      <div
+        className={`absolute inset-0 ${
+          isLight
+            ? "bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.28),transparent_58%)]"
+            : "bg-[radial-gradient(circle_at_50%_0%,rgba(14,165,233,0.08),transparent_50%)]"
+        }`}
+      />
       <div
         ref={cursorHeadRef}
-        className="absolute left-0 top-0 z-20 h-4 w-4 rounded-full border border-sky-200/60 bg-sky-300/35 opacity-0 will-change-transform blur-[1px] transition-opacity duration-300"
+        className={`absolute left-0 top-0 z-20 h-4 w-4 rounded-full opacity-0 will-change-transform blur-[1px] transition-opacity duration-300 ${
+          isLight ? "border border-sky-500/55 bg-sky-300/30" : "border border-sky-200/60 bg-sky-300/35"
+        }`}
       />
       {Array.from({ length: trailCount }).map((_, idx) => {
         const size = Math.max(5, 12 - idx);
@@ -199,7 +242,9 @@ export function GlobalBackground() {
               trailNodeRefs.current[idx] = node;
             }}
             style={{ width: `${size}px`, height: `${size}px` }}
-            className="absolute left-0 top-0 z-20 rounded-full border border-cyan-200/30 bg-cyan-300/25 opacity-0 will-change-transform blur-[0.5px] transition-opacity duration-300"
+            className={`absolute left-0 top-0 z-20 rounded-full opacity-0 will-change-transform blur-[0.5px] transition-opacity duration-300 ${
+              isLight ? "border border-cyan-500/35 bg-cyan-300/18" : "border border-cyan-200/30 bg-cyan-300/25"
+            }`}
           />
         );
       })}
