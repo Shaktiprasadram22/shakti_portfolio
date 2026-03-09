@@ -10,6 +10,7 @@ import {
   Network,
   Server,
   Sparkles,
+  Wrench,
 } from "lucide-react";
 import { fadeInUp, sectionViewport, staggerContainer } from "@/lib/animations";
 import { skills } from "@/lib/data";
@@ -19,6 +20,7 @@ const categoryIcons = {
   "Backend & Web": Server,
   Databases: Database,
   "Cloud & DevOps": CloudCog,
+  Tools: Wrench,
   "System Design": Network,
 } as const;
 

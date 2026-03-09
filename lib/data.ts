@@ -47,7 +47,11 @@ export const skills: SkillGroup[] = [
   },
   {
     title: "Cloud & DevOps",
-    skills: ["Docker", "AWS", "CI/CD"],
+    skills: ["Docker", "AWS", "CI/CD", "Git", "GitHub"],
+  },
+  {
+    title: "Tools",
+    skills: ["VS Code", "Postman", "Cursor"],
   },
   {
     title: "System Design",
@@ -361,6 +365,17 @@ export const howIThinkBreakdowns: HowIThinkBreakdown[] = [
 ];
 
 export const experience: Experience[] = [
+  {
+    role: "Full Stack & Cloud Training",
+    company: "Accenture",
+    duration: "Jan 2026 - Present",
+    responsibilities: [
+      "Training in MERN (MongoDB, Express, React, Node.js) and MEAN stack development.",
+      "Exposure to cloud infrastructure and DevOps workflows.",
+      "Practical understanding of AI integration in modern applications.",
+      "Developed knowledge of backend APIs and frontend application architecture.",
+    ],
+  },
   {
     role: "Software Developer Intern",
     company: "Vibeinn Technology",
