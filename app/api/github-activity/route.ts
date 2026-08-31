@@ -2,6 +2,8 @@
 
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 const GITHUB_USERNAME = "Shaktiprasadram22";
 const DAY_MS = 24 * 60 * 60 * 1000;
 const WEEK_MS = 7 * DAY_MS;

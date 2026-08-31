@@ -9,7 +9,11 @@
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "build:cloudflare": "npx --yes --package node@22 --call './node_modules/.bin/opennextjs-cloudflare build'",
+    "preview:cloudflare": "npx --yes --package node@22 --call './node_modules/.bin/opennextjs-cloudflare build && OPEN_NEXT_DEPLOY=true ./node_modules/.bin/wrangler dev --config wrangler.jsonc'",
+    "deploy:cloudflare": "npx --yes --package node@22 --call './node_modules/.bin/opennextjs-cloudflare build && OPEN_NEXT_DEPLOY=true ./node_modules/.bin/wrangler deploy --config wrangler.jsonc'",
+    "cf-typegen": "npx --yes --package node@22 --call './node_modules/.bin/wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts'"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
@@ -22,6 +26,7 @@
     "three": "^0.167.1"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "1.15.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -37,6 +42,7 @@
     "jest-environment-jsdom": "^30.2.0",
     "postcss": "^8.4.40",
     "tailwindcss": "^3.4.7",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "wrangler": "4.127.1"
   }
 }
